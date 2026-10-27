@@ -1,0 +1,5 @@
+interface:
+  display_name: "Spec to MVP"
+  short_description: "Narrow a spec to its smallest falsifiable version"
+policy:
+  allow_implicit_invocation: true

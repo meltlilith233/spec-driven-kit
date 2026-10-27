@@ -1,0 +1,21 @@
+{
+  "name": "spec-driven-kit",
+  "version": "0.1.0",
+  "description": "Three chained agent skills that turn a one-line idea into a product doc, verifiable specs, and tested code. 把一句话想法变成能直接开工的文档集，再变成有测试保护的代码。",
+  "author": {
+    "name": "meltlilith233",
+    "url": "https://github.com/meltlilith233"
+  },
+  "homepage": "https://github.com/meltlilith233/spec-driven-kit",
+  "repository": "https://github.com/meltlilith233/spec-driven-kit",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "spec-driven",
+    "product-management",
+    "mvp",
+    "tdd",
+    "agile",
+    "agent-skills"
+  ]
+}

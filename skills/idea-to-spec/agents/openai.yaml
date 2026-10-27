@@ -1,0 +1,5 @@
+interface:
+  display_name: "Idea to Spec"
+  short_description: "Fuzzy idea → product doc + verifiable specs"
+policy:
+  allow_implicit_invocation: true

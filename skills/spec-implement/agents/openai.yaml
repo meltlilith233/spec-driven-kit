@@ -1,0 +1,5 @@
+interface:
+  display_name: "Spec Implement"
+  short_description: "Red-green-refactor per acceptance criterion, then backfill"
+policy:
+  allow_implicit_invocation: true
