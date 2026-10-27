@@ -1,6 +1,6 @@
 {
   "name": "spec-driven-kit",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Four chained agent skills that turn a one-line idea into a product doc, verifiable specs, tested code, and an independent review. 把一句话想法变成能直接开工的文档集，再变成有测试保护和独立评审的代码。",
   "author": {
     "name": "meltlilith233",

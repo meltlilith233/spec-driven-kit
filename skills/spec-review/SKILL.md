@@ -1,6 +1,6 @@
 ---
 name: spec-review
-description: 对照 spec 审一遍已完成的实现：双轴独立评审加证据核对，只出报告不改代码。当一份 spec 已实现完、要验收或合并前检查时使用。
+description: 对照一份 spec 和一个 git 固定点审已完成的 diff，分 Spec 轴、Standards 轴、证据三块出报告，不改代码。当一份 spec 已实现完、要验收或合并前检查时使用。
 ---
 
 # Spec Review
@@ -21,28 +21,43 @@ description: 对照 spec 审一遍已完成的实现：双轴独立评审加证�
 
 三块分开报，**不合并、不跨轴排名**。
 
+## 输入：缺了要降级，不要硬跑
+
+要两样东西：一份 spec、一个固定点。缺哪样就降级，并把降级写在报告第一行。
+
+**没有 spec** → 只跑 Standards 轴和成对提交检查，报告头写「降级：无 spec，Spec 轴未执行」。
+
+不要拿 diff 当 spec 自己跟自己对——那是用一个猜测去验证另一个猜测。
+
+**没有固定点**（"帮我 review 一下最近的改动"）→ 这不是固定点。给两个候选让用户选：
+
+- `git merge-base HEAD origin/main`：整条分支
+- `HEAD~<n>`：最近 n 个提交
+
+猜错起点，整份报告会漏掉一半改动，而且看不出来漏了。
+
 ## 固定点
 
 对着 merge-base 比：
 
 ```
-git diff <fixed-point>...HEAD
-git log <fixed-point>..HEAD --oneline
+git diff <fixed>...HEAD
+git log <fixed>..HEAD --oneline
 ```
 
-固定点怎么定，按顺序：
+按顺序定：
 
-1. commit message 里有 `SPEC-003` 的，取最早那个的 parent
+1. `git log --grep='SPEC-003' --reverse` 第一条的 parent
 2. 用户指定的
 3. 都没有就问，别猜
 
-先确认 `git rev-parse <fixed>` 能解析、diff 非空。坏 ref 或空 diff 在这一步失败，不要带进两个 sub-agent 里——那样你只会得到两份"没找到改动"的报告。
+先确认 `git rev-parse <fixed>` 能解析、diff 非空。坏 ref 或空 diff 在这一步失败，不要带进两个 sub-agent——那样你只会收到两份"没找到改动"的报告。
 
 ## 起两个 sub-agent
 
-并行，前台，各自独立上下文。两份 brief 都要带上 diff 命令和 commit 列表。
+并行，前台，各自独立上下文。两份 brief 都要带上固定点、diff 命令、仓库规范来源。
 
-细则、baseline、brief 模板见 [references/review-axes.md](references/review-axes.md)，起 sub-agent 之前把对应段落整段贴进去——它们没有别的渠道拿到这些内容。
+细则和 baseline 见 [references/review-axes.md](references/review-axes.md)。**那份文件里的 brief 是填空式模板，四个 `<...>` 占位符必须替换成真实值再贴**——把占位符原样递过去，sub-agent 要么忽略它，要么自己编一套标准。
 
 两条共同约束：单份报告 400 字以内；工具已经强制的东西不要报。
 
@@ -50,25 +65,44 @@ git log <fixed-point>..HEAD --oneline
 
 ## 证据核对
 
-这一轴不用 sub-agent。它该由命令回答，不该由判断回答。在本体跑：
+这一轴不用 sub-agent。它该由命令回答，不该由判断回答。
+
+**先确认有没有可核的东西**：spec 里有「回填」表吗？
+
+没有就整轴记「不适用」，不影响结论。只用过 `spec-implement`、没走过 `spec-mvp` 的项目本来就没有伪造清单——照着有清单的规则去核，会造出一个假警报。
+
+然后三条：
 
 ```bash
-git log --oneline <fixed>..HEAD        # 有没有 test 红 → feat 绿 的成对提交
-grep -rn "MVP-FAKE" src/               # 和 MVP spec 的伪造清单对账
-git diff --stat docs/specs/            # 回填到底有没有发生
+git log --oneline <fixed>..HEAD    # 有没有 test(SPEC-003 AC-2) → feat(SPEC-003 AC-2)
+git grep -n "MVP-FAKE"             # 逐条比：清单每一行至少命中一处
+git diff --stat docs/specs/        # 回填表是不是真的被填进文件了
 ```
 
-再把 spec 里的映射表逐条拿出来核：`AC-2 → api/tests/inbox.spec.ts::creates_item_at_head`，这个文件在不在、这个用例名在不在、跑一次绿不绿。
+再逐条核回填表：测试文件在不在、用例名在不在、跑一次绿不绿。
 
-这一轴只有两档：**对得上 / 对不上**。
+判据是三态，不是两态：
 
-对不上就是没做 TDD，不管实现报告里写了什么。这是整套流程里唯一一处不看叙述、只看物证的地方。
+| 情况 | 判 |
+|---|---|
+| 回填表与代码对得上、成对提交齐 | **通过** |
+| 查不到用例 / 表是空的 / 有伪造没标记 | **不通过** |
+| squash、保护分支、非 git 仓库 | 看回填表里的红输出，有则通过 |
+| spec 没有回填表 | **不适用**，不参与结论 |
+
+`MVP-FAKE` 只比"有没有"，不比总数：一行伪造清单可能落在好几处标记上，数量对不上是正常的。
+
+这一轴不给"部分通过"。要么有物证，要么没有。
 
 ## 汇总
 
 三块并列，原样呈现，不要揉成一段总结。
 
 结尾一行：每块各几条问题，以及**每一块内部**最严重的那条。跨轴不排名——那正是分轴的用意。
+
+报告写到 `docs/reviews/SPEC-<NNN>-r<轮次>.md`，骨架见 [assets/review-report.md](assets/review-report.md)。
+
+不落盘就没有"第 1 轮 / 第 2 轮"可比，这条链在 review 这一步又退回靠叙述。
 
 ## 审查不修
 
@@ -78,11 +112,11 @@ git diff --stat docs/specs/            # 回填到底有没有发生
 
 ## 结论怎么用
 
-| 情况 | 动作 |
+| 结果 | 动作 |
 |---|---|
-| Spec 轴有缺失/错误 | 回 `spec-implement` 修，状态留 `in-progress` |
-| 证据对不上 | 同上，并补上缺失的红证据 |
-| 只有 Standards 轴有问题 | 可以合并，问题记进 spec 的风险节 |
+| Spec 轴或证据不通过 | 回 `spec-implement` 修，状态留 `in-progress`；改完**必须再审一次**，报告标「第 2 轮」 |
+| 只有 Standards 轴有问题 | 可以合并，问题记进 spec 的风险节，不再审 |
 | 三块都过 | 有判定阈值的改 `awaiting-verdict`，否则 `done` |
+| **连续两轮不通过** | 停。让用户在"改 spec"和"接受现状"之间选，不要自己再改第三轮 |
 
-报告骨架见 [assets/review-report.md](assets/review-report.md)。
+最后一行是终止条件。没有它，review 会变成改—审—改—审的死循环，而且每一轮都在小幅降低标准。

@@ -1,11 +1,12 @@
-# Review · SPEC-<NNN>
+# Review · SPEC-<NNN> · 第 <n> 轮
 
 | | |
 |---|---|
 | 对照 spec | `docs/specs/<NNN>-<slug>.md` |
 | 固定点 | `<branch/commit>` @ `<sha>` |
 | diff 规模 | <n> 文件，+<n> −<n> |
-| 结论 | 需修改 / 可合并 |
+| 结论 | 需修改 / 仅标准问题可合并 / 通过 |
+| 降级 | 无 / 无 spec：Spec 轴未执行 |
 
 ## Spec 轴
 
@@ -43,13 +44,15 @@
 
 | 检查 | 结果 |
 |---|---|
+| 回填表 | 有 / 无（无则整轴「不适用」） |
 | 红绿成对提交 | <n>/<n> 成对 |
-| 映射表可跑 | AC-1 ✓ / AC-2 ✗ |
-| MVP-FAKE 对账 | 清单 <n> 条 / 代码 <n> 处 |
-| 文档回填 | 有 / 无（`docs/specs/` diff <n> 行） |
+| 回填表可跑 | AC-1 ✓ / AC-2 ✗ |
+| MVP-FAKE 逐条 | 清单 <n> 行，命中 <n> 行 |
 
 ## 小结
 
-Spec <x> 条，Standards <y> 条，证据 <通过 / 不通过>。
+Spec <x> 条，Standards <y> 条，证据 <通过 / 不通过 / 不适用>。
 
 最严重：Spec 轴——<一句话>；Standards 轴——<一句话>。
+
+下一轮：<回 implement 修 / 合并 / 终止>

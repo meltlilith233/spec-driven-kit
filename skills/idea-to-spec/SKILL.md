@@ -41,7 +41,7 @@ description: 把产品想法变成可执行文档：拷问出决策、写 produc
 
 **3. Spec。** 先切图给用户确认，再逐片写透。只详写最近两三片，其余在 `_index` 里留一行。
 
-第一片是**能证伪最大风险的最薄通路**。这两者常常不是同一片——最薄通路通常是 CRUD，风险常在效果或数据上。不同时先插一个 spike 验风险，再补骨架。
+第一片是**能证伪最大风险的最薄通路**。这两者常常不是同一片——最薄通路通常是 CRUD，风险常在效果或数据上。不同时先插一个 spike 验风险（产物是 `docs/specs/NNN-spike-*.md`，不进实现），再补骨架。写法见 [references/spec-writing.md](references/spec-writing.md)。
 
 粒度用事前可判的指标：≤5 文件 / ≤400 行 / ≤8 条 AC / 0 新依赖。超了先试着拆，拆不动的写明理由。
 
@@ -72,7 +72,16 @@ docs/
 
 仓库已有文档约定就跟着走，别另起一套。
 
-状态：`draft → ready → in-progress → done`；带判定阈值的走 `awaiting-verdict`（见 `spec-mvp`）；被取代的标 `superseded`，不删不改。
+状态只有一套，谁在什么时候写它是固定的——不定下来，`ready` 这种状态就会没人写，下游只能靠猜：
+
+| 状态 | 谁写 | 什么时候 |
+|---|---|---|
+| `draft` | idea-to-spec | 文件创建时 |
+| `ready` | idea-to-spec | 出口自检全过；MVP 分支出 spec-mvp 写 |
+| `in-progress` | spec-implement | 开工第一件事 |
+| `awaiting-verdict` | spec-review | 三块都过，且 spec 带判定协议 |
+| `done` | spec-review | 三块都过，且没有判定协议 |
+| `superseded` | 任何人 | 被新 spec 取代，原文不动 |
 
 ## 之后
 
