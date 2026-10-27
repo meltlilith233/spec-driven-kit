@@ -8,8 +8,8 @@
     {
       "name": "spec-driven-kit",
       "source": "./",
-      "description": "Turn a one-line idea into a product doc, verifiable specs, and tested code. 三个串成一条链的 agent skill：拷问需求、写产品文档、切可验收的 spec、收成 MVP、用 TDD 实现。",
-      "version": "0.1.0"
+      "description": "Four chained agent skills: idea → product doc → verifiable specs → MVP → tested code → independent review. 四个串成一条链的 agent skill：拷问需求、写产品文档、切可验收的 spec、收成 MVP、用 TDD 实现、独立评审。",
+      "version": "0.2.0"
     }
   ]
 }

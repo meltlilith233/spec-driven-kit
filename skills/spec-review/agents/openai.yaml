@@ -1,0 +1,5 @@
+interface:
+  display_name: "Spec Review"
+  short_description: "Two-axis review plus evidence check, report only"
+policy:
+  allow_implicit_invocation: true
